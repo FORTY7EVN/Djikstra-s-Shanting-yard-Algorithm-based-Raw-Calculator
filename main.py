@@ -1,14 +1,11 @@
 input_var = None
-operation_stack = []
-output_queue = []
-evaluation_stack = []
 
-operator_metadata = {
-    "+": ["left", 1],
-    "-": ["left", 1],
-    "*": ["left", 2],
-    "/": ["left", 2],
-    "^": ["right", 3],
+operators = {
+    "+": {"prec": 1, "assoc": "L"},
+    "-": {"prec": 1, "assoc": "L"},
+    "*": {"prec": 2, "assoc": "L"},
+    "/": {"prec": 2, "assoc": "L"},
+    "^": {"prec": 3, "assoc": "R"},
 }
 
 equation = input("Enter an expression: ")
@@ -17,7 +14,9 @@ if not equation:
 
 
 def tokenize(expression: str):
-
+    op_stack = []
+    output_queue = []
+    evaluation_stack = []
     equation = expression.replace(" ", "")
     tokens = []
     current_number = ""
@@ -40,8 +39,24 @@ def tokenize(expression: str):
             tokens.append(float(current_number))
         else:
             tokens.append(int(current_number))
-    return tokens
+    for token in tokens:
+        if isinstance(token, (int, float)):
+            output_queue.append(token)
+        elif token in operators:
+            op1 = token
+            while (
+                len(op_stack) > 0
+                and
+                op_stack[-1] != "("
+                and
+                (
+                    (
+                        operators[op1][assoc] == "L"
+                        and
+                        operators[op1]["prec"] <= operators[op_stack[-1]]["prec"]
+                    )
+                )
+            )
 
 
 print(tokenize(equation))
-# Output: [5, '+', 6, '*', '(', 88, '*', 780, ')']
