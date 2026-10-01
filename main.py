@@ -84,7 +84,8 @@ def shunting_yard(expression: str):
 
 def evaluate():
     expression = input("Enter a mathematical expression: ")
-    return print(shunting_yard(expression))
+    value = shunting_yard(expression)
+    return print(f"{value:.4f}".rstrip("0").rstrip("."))
 
 
 evaluate()
